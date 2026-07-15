@@ -33,20 +33,14 @@ export function useRoom(roomCode) {
 
     const channel = supabase
       .channel(`room-${roomCode}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms', filter: `code=eq.${roomCode}` }, (payload) => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms', filter: `code=eq.${roomCode}` }, async (payload) => {
         setRoom(payload.new);
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_code=eq.${roomCode}` }, async (payload) => {
-        // Bảng players gốc bị revoke quyền đọc trực tiếp (xem players_public trong migration),
-        // nên không dùng thẳng payload.new (có thể chứa cột nhạy cảm như role/team) mà phải
-        // truy vấn lại đúng 1 dòng qua view players_public rồi patch vào state.
-        const id = payload.new?.id ?? payload.old?.id;
-        if (!id) return;
-        const { data } = await supabase.from('players_public').select('*').eq('id', id).maybeSingle();
-        setPlayers((prev) => {
-          if (!data) return prev.filter((p) => p.id !== id);
-          return prev.some((p) => p.id === id) ? prev.map((p) => (p.id === id ? data : p)) : [...prev, data];
-        });
+        // Bảng players gốc bị revoke quyền đọc trực tiếp (giấu vai trò) nên Realtime KHÔNG BAO GIỜ
+        // gửi được postgres_changes cho bảng players tới client (thiếu GRANT SELECT dù RLS cho phép).
+        // Migration 0003 gắn trigger: mỗi khi players thay đổi (join/chết/...) sẽ "chạm" rooms.updated_at,
+        // nên cứ mỗi lần rooms đổi ta refetch nhẹ players_public để đồng bộ danh sách người chơi.
+        const { data } = await supabase.from('players_public').select('*').eq('room_code', roomCode).order('joined_at');
+        if (data) setPlayers(data);
       })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'game_logs', filter: `room_code=eq.${roomCode}` }, (payload) => {
         setLogs((prev) => (prev.some((x) => x.id === payload.new.id) ? prev : [...prev, payload.new]));

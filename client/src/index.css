@@ -15,6 +15,44 @@ html, body, #root {
 
 .font-display { font-family: 'Cinzel', serif; }
 
+.gradient-text {
+  background: linear-gradient(135deg, #ff5ca8, #8b5cf6 50%, #5eead4);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass-card {
+  background: rgba(18, 20, 43, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-width: 1px;
+  border-style: solid;
+  /* border-color tự chọn qua class Tailwind (vd border-white/10) đi kèm ở mỗi nơi dùng */
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, #ff5ca8, #8b5cf6 50%, #5eead4);
+  background-size: 200% 200%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-position 0.6s ease;
+}
+.btn-gradient:hover { background-position: 100% 50%; box-shadow: 0 0 25px rgba(139, 92, 246, 0.45); }
+.btn-gradient:active { transform: scale(0.96); }
+
+.confetti-piece {
+  position: absolute;
+  top: 0;
+  will-change: transform, opacity;
+  animation: confetti-fall linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-drift, .animate-gradient-x, .animate-pop-in, .animate-pulse-glow, .animate-wiggle, .confetti-piece {
+    animation: none !important;
+  }
+}
+
 .card-flip-scene { perspective: 1200px; }
 .card-flip-inner {
   position: relative;

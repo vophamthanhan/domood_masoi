@@ -51,14 +51,20 @@ export default function EffectOverlay({ logs }) {
           className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none"
         >
           <motion.div
-            initial={{ scale: 0.4, y: 20 }}
-            animate={{ scale: 1.15, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-gz-gradient opacity-10"
+          />
+          <motion.div
+            initial={{ scale: 0.4, y: 20, rotate: -4 }}
+            animate={{ scale: 1.15, y: 0, rotate: 0 }}
             exit={{ scale: 0.6, opacity: 0 }}
             transition={{ type: 'spring', bounce: 0.5 }}
-            className="text-center"
+            className="text-center relative"
           >
             <div className="text-7xl mb-2 drop-shadow-lg">{active.emoji}</div>
-            <div className="font-display text-xl text-white/90 bg-black/40 rounded-full px-4 py-1 inline-block">
+            <div className="font-display text-xl text-white/90 bg-black/40 rounded-full px-4 py-1 inline-block shadow-neon">
               {active.text}
             </div>
           </motion.div>

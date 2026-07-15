@@ -47,7 +47,8 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
   if (!isMyTurn) {
     return (
       <div className="text-center py-10 text-white/40 font-display">
-        😴 Bạn đang say ngủ... Hãy chờ đến lượt vai <b>{ROLES_INFO[myRole.role]?.name}</b> của bạn.
+        <div className="text-4xl mb-2 animate-float inline-block">😴</div>
+        <div>Bạn đang say ngủ... Hãy chờ đến lượt vai <b>{ROLES_INFO[myRole.role]?.name}</b> của bạn.</div>
       </div>
     );
   }
@@ -55,7 +56,7 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
   const info = ROLES_INFO[myRole.role];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-night-800/80 border border-white/10 rounded-2xl p-6">
+    <motion.div initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="glass-card border-white/10 rounded-2xl p-6 animate-pulse-glow">
       <div className="flex items-center gap-3 mb-4">
         <span className="text-3xl">{info.icon}</span>
         <div>
@@ -75,13 +76,15 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
             </p>
           )}
           <PlayerPicker players={alivePlayers} value={target} onChange={setTarget} />
-          <button
+          <motion.button
+            whileHover={target && !busy && !done.kill ? { scale: 1.02 } : {}}
+            whileTap={target && !busy && !done.kill ? { scale: 0.96 } : {}}
             disabled={!target || busy || done.kill}
             onClick={() => act('kill')}
-            className="mt-3 w-full bg-blood rounded-lg py-2.5 font-display disabled:opacity-40"
+            className="mt-3 w-full bg-blood rounded-xl py-2.5 font-display disabled:opacity-40"
           >
             {done.kill ? '✔ Đã chọn nạn nhân' : '🩸 Cắn'}
-          </button>
+          </motion.button>
         </div>
       )}
 
@@ -90,13 +93,15 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
         <div>
           <p className="text-xs text-white/40 mb-2">Chọn một con Sói khác để tiêu diệt (chỉ đêm chẵn):</p>
           <PlayerPicker players={alivePlayers} value={target} onChange={setTarget} />
-          <button
+          <motion.button
+            whileHover={target && !busy && !done.kill_wolf ? { scale: 1.02 } : {}}
+            whileTap={target && !busy && !done.kill_wolf ? { scale: 0.96 } : {}}
             disabled={!target || busy || done.kill_wolf}
             onClick={() => act('kill_wolf')}
-            className="mt-3 w-full bg-blood rounded-lg py-2.5 font-display disabled:opacity-40"
+            className="mt-3 w-full bg-blood rounded-xl py-2.5 font-display disabled:opacity-40"
           >
             {done.kill_wolf ? '✔ Đã chọn' : '❄️ Ra tay'}
-          </button>
+          </motion.button>
         </div>
       )}
 
@@ -104,13 +109,15 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
       {myRole.role === 'guard' && (
         <div>
           <PlayerPicker players={[...alivePlayers, { id: myRole.player_id, name: 'Chính mình' }]} value={target} onChange={setTarget} />
-          <button
+          <motion.button
+            whileHover={target && !busy && !done.protect ? { scale: 1.02 } : {}}
+            whileTap={target && !busy && !done.protect ? { scale: 0.96 } : {}}
             disabled={!target || busy || done.protect}
             onClick={() => act('protect')}
-            className="mt-3 w-full bg-emerald-600 rounded-lg py-2.5 font-display disabled:opacity-40"
+            className="mt-3 w-full bg-emerald-600 rounded-xl py-2.5 font-display disabled:opacity-40"
           >
             {done.protect ? '✔ Đã bảo vệ' : '🛡️ Bảo vệ'}
-          </button>
+          </motion.button>
         </div>
       )}
 
@@ -118,13 +125,15 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
       {myRole.role === 'seer' && (
         <div>
           <PlayerPicker players={alivePlayers} value={target} onChange={setTarget} />
-          <button
+          <motion.button
+            whileHover={target && !busy && !seerResult ? { scale: 1.02 } : {}}
+            whileTap={target && !busy && !seerResult ? { scale: 0.96 } : {}}
             disabled={!target || busy || seerResult}
             onClick={() => act('check')}
-            className="mt-3 w-full bg-emerald-600 rounded-lg py-2.5 font-display disabled:opacity-40"
+            className="mt-3 w-full bg-emerald-600 rounded-xl py-2.5 font-display disabled:opacity-40"
           >
             {seerResult ? '✔ Đã soi' : '🔮 Soi'}
-          </button>
+          </motion.button>
           {seerResult && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-3 text-center bg-night-900 rounded-lg py-3">
               <b>{seerResult.name}</b> thuộc về{' '}
@@ -149,24 +158,28 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
             )}
           </div>
           {!myRole.used_witch_heal && myRole.wolf_victim && (
-            <button
+            <motion.button
+              whileHover={!busy && !done.heal ? { scale: 1.02 } : {}}
+              whileTap={!busy && !done.heal ? { scale: 0.96 } : {}}
               disabled={busy || done.heal}
               onClick={() => act('heal', myRole.wolf_victim.id)}
-              className="w-full bg-emerald-600 rounded-lg py-2.5 font-display disabled:opacity-40"
+              className="w-full bg-emerald-600 rounded-xl py-2.5 font-display disabled:opacity-40"
             >
               {done.heal ? '✔ Đã cứu' : '💚 Dùng thuốc cứu'}
-            </button>
+            </motion.button>
           )}
           {!myRole.used_witch_poison && (
             <div>
               <PlayerPicker players={alivePlayers} value={target2} onChange={setTarget2} />
-              <button
+              <motion.button
+                whileHover={target2 && !busy && !done.poison ? { scale: 1.02 } : {}}
+                whileTap={target2 && !busy && !done.poison ? { scale: 0.96 } : {}}
                 disabled={!target2 || busy || done.poison}
                 onClick={() => act('poison', target2, null)}
-                className="mt-2 w-full bg-purple-700 rounded-lg py-2.5 font-display disabled:opacity-40"
+                className="mt-2 w-full bg-purple-700 rounded-xl py-2.5 font-display disabled:opacity-40"
               >
                 {done.poison ? '✔ Đã đầu độc' : '☠️ Dùng thuốc độc'}
-              </button>
+              </motion.button>
             </div>
           )}
           {(myRole.used_witch_heal || done.heal) && (myRole.used_witch_poison || done.poison) && (
@@ -182,13 +195,15 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
           <PlayerPicker players={[...alivePlayers, { id: myRole.player_id, name: 'Chính mình' }]} value={target} onChange={setTarget} label="Người 1" />
           <div className="h-2" />
           <PlayerPicker players={[...alivePlayers, { id: myRole.player_id, name: 'Chính mình' }]} value={target2} onChange={setTarget2} label="Người 2" />
-          <button
+          <motion.button
+            whileHover={target && target2 && target !== target2 && !busy && !done.link_lovers ? { scale: 1.02 } : {}}
+            whileTap={target && target2 && target !== target2 && !busy && !done.link_lovers ? { scale: 0.96 } : {}}
             disabled={!target || !target2 || target === target2 || busy || done.link_lovers}
             onClick={() => act('link_lovers')}
-            className="mt-3 w-full bg-pink-600 rounded-lg py-2.5 font-display disabled:opacity-40"
+            className="mt-3 w-full bg-pink-600 rounded-xl py-2.5 font-display disabled:opacity-40"
           >
             {done.link_lovers ? '✔ Đã ghép đôi' : '💘 Ghép đôi'}
-          </button>
+          </motion.button>
         </div>
       )}
 
@@ -197,13 +212,15 @@ function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
         <div>
           <p className="text-xs text-white/40 mb-2">Chọn một người để bí mật đổi vai (cả hai không ai biết ai đã đổi với ai):</p>
           <PlayerPicker players={alivePlayers} value={target} onChange={setTarget} />
-          <button
+          <motion.button
+            whileHover={target && !busy && !done.thief_swap ? { scale: 1.02 } : {}}
+            whileTap={target && !busy && !done.thief_swap ? { scale: 0.96 } : {}}
             disabled={!target || busy || done.thief_swap}
             onClick={() => act('thief_swap')}
-            className="mt-3 w-full bg-sky-600 rounded-lg py-2.5 font-display disabled:opacity-40"
+            className="mt-3 w-full bg-sky-600 rounded-xl py-2.5 font-display disabled:opacity-40"
           >
             {done.thief_swap ? '✔ Đã đổi vai' : '🗝️ Đổi vai'}
-          </button>
+          </motion.button>
         </div>
       )}
 
@@ -225,15 +242,17 @@ function PlayerPicker({ players, value, onChange, label }) {
       {label && <p className="text-xs text-white/40 mb-1">{label}</p>}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {players.map((p) => (
-          <button
+          <motion.button
             key={p.id}
             onClick={() => onChange(p.id)}
-            className={`text-sm rounded-lg px-3 py-2 border transition truncate ${
-              value === p.id ? 'bg-moon/20 border-moon text-moon' : 'bg-night-900 border-white/10 hover:border-white/30'
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
+            className={`text-sm rounded-xl px-3 py-2 border transition truncate ${
+              value === p.id ? 'bg-neon-purple/20 border-neon-purple text-white shadow-neon' : 'bg-night-900 border-white/10 hover:border-white/30'
             }`}
           >
             {p.name}
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>

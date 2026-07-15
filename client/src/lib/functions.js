@@ -20,7 +20,7 @@ async function call(fnName, payload) {
 
 export const api = {
   joinRoom: (roomCode, name, avatar) => call('join-room', { roomCode, name, avatar }),
-  startGame: (roomCode, extraRoles) => call('start-game', { roomCode, extraRoles }),
+  startGame: (roomCode, extraRoles, hostPlays = true) => call('start-game', { roomCode, extraRoles, hostPlays }),
   getMyRole: (roomCode) => call('get-my-role', { roomCode }),
   getAllRoles: (roomCode) => call('get-all-roles', { roomCode }),
   submitNightAction: (roomCode, actionType, targetPlayerId, targetPlayerId2) =>

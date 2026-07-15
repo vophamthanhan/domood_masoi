@@ -28,7 +28,7 @@ function VotingPanel({ roomCode, players, votes, myPlayer, runoffCandidates }) {
   const canVote = myPlayer?.is_alive && myPlayer?.can_vote;
 
   return (
-    <div className="bg-night-800/80 border border-white/10 rounded-2xl p-6">
+    <div className="glass-card border-white/10 rounded-2xl p-6">
       <h3 className="font-display text-xl mb-1">🗳️ Bỏ phiếu treo cổ</h3>
       <p className="text-xs text-white/40 mb-4">
         {canVote ? 'Chọn người bạn nghi ngờ là Sói.' : 'Bạn không thể bỏ phiếu lúc này.'}
@@ -39,19 +39,21 @@ function VotingPanel({ roomCode, players, votes, myPlayer, runoffCandidates }) {
           const pct = (count / maxVotes) * 100;
           const isMine = myVote?.target_player_id === p.id;
           return (
-            <button
+            <motion.button
               key={p.id}
               disabled={!canVote || busy}
               onClick={() => vote(p.id)}
-              className={`w-full text-left relative overflow-hidden rounded-lg border px-4 py-3 transition ${
-                isMine ? 'border-blood' : 'border-white/10 hover:border-white/30'
+              whileHover={canVote && !busy ? { scale: 1.015 } : {}}
+              whileTap={canVote && !busy ? { scale: 0.98 } : {}}
+              className={`w-full text-left relative overflow-hidden rounded-xl border px-4 py-3 transition ${
+                isMine ? 'border-blood shadow-wolf' : 'border-white/10 hover:border-neon-purple/40'
               } disabled:cursor-not-allowed`}
             >
               <motion.div
-                className="absolute inset-y-0 left-0 bg-blood/25"
+                className="absolute inset-y-0 left-0 bg-gradient-to-r from-blood/40 to-neon-pink/25"
                 initial={{ width: 0 }}
                 animate={{ width: `${pct}%` }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
               />
               <div className="relative flex items-center justify-between">
                 <span>
@@ -59,7 +61,7 @@ function VotingPanel({ roomCode, players, votes, myPlayer, runoffCandidates }) {
                 </span>
                 <span className="text-sm text-white/60">{count} phiếu</span>
               </div>
-            </button>
+            </motion.button>
           );
         })}
       </div>

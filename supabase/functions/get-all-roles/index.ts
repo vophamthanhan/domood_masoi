@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
 
     const { data: players } = await db
       .from('players')
-      .select('id,name,role,team,is_alive,lover_id')
+      .select('id,name,role,team,is_alive,lover_id,is_host,avatar')
       .eq('room_code', code);
 
     const withNames = (players || []).map((p) => ({

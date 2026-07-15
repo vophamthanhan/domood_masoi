@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
     const userId = await getCallerUserId(req);
     if (!userId) return json({ error: 'Chưa đăng nhập' }, 401);
 
-    const { roomCode, extraRoles = [] } = await req.json();
+    const { roomCode, extraRoles = [], hostPlays = true } = await req.json();
     const code = (roomCode || '').trim().toUpperCase();
     const db = adminClient();
 
@@ -16,7 +16,10 @@ Deno.serve(async (req) => {
     if (room.host_user_id !== userId) return json({ error: 'Chỉ chủ phòng mới được bắt đầu ván' }, 403);
     if (room.phase !== 'lobby') return json({ error: 'Ván đã bắt đầu rồi' }, 400);
 
-    const { data: players } = await db.from('players').select('*').eq('room_code', code);
+    const { data: allPlayers } = await db.from('players').select('*').eq('room_code', code);
+    // Nếu host chọn làm quản trò thuần (không chơi), loại host khỏi hồ vai - host không có vai,
+    // không tính vào tỉ lệ Sói, và không phải mục tiêu đêm/bỏ phiếu (is_alive=false, can_vote=false).
+    const players = hostPlays ? allPlayers : (allPlayers || []).filter((p) => p.user_id !== room.host_user_id);
     if (!players || players.length < 5) return json({ error: 'Cần tối thiểu 5 người chơi' }, 400);
 
     const pool = buildRolePool(players.length, extraRoles);
@@ -28,6 +31,13 @@ Deno.serve(async (req) => {
       await db.from('players').update({ role, team }).eq('id', shuffledPlayers[i].id);
     }
 
+    if (!hostPlays) {
+      const host = (allPlayers || []).find((p) => p.user_id === room.host_user_id);
+      if (host) {
+        await db.from('players').update({ role: null, team: null, is_alive: false, can_vote: false }).eq('id', host.id);
+      }
+    }
+
     const nightOrderRoles = pool.filter((r, i, arr) => arr.indexOf(r) === i); // roles có mặt trong ván
 
     await db
@@ -36,7 +46,7 @@ Deno.serve(async (req) => {
         phase: 'night',
         night_number: 1,
         day_number: 0,
-        settings: { extraRoles },
+        settings: { extraRoles, hostPlays },
         phase_data: { subphase_index: 0, present_roles: nightOrderRoles, pending_hunter: null },
         winner: null,
       })

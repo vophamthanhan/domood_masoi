@@ -4,6 +4,12 @@ import { api } from '../lib/functions.js';
 
 const AVATARS = ['🧑', '👩', '🧔', '👨‍🌾', '👩‍🦰', '🧑‍🎨', '👨‍🚀', '🧙', '🧛', '🕵️'];
 
+const cardIn = { hidden: { opacity: 0, y: 24, scale: 0.97 }, show: { opacity: 1, y: 0, scale: 1 } };
+const fieldIn = {
+  hidden: { opacity: 0, y: 12 },
+  show: (i) => ({ opacity: 1, y: 0, transition: { delay: 0.15 + i * 0.08, duration: 0.35 } }),
+};
+
 export default function Home({ onJoined }) {
   const [name, setName] = useState('');
   const [roomCode, setRoomCode] = useState('');
@@ -15,7 +21,7 @@ export default function Home({ onJoined }) {
     e.preventDefault();
     setError('');
     if (!name.trim() || !roomCode.trim()) {
-      setError('Nhập tên và mã phòng nhé.');
+      setError('Điền tên với mã phòng vô đã nào 👀');
       return;
     }
     setLoading(true);
@@ -30,21 +36,30 @@ export default function Home({ onJoined }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      <div className="pointer-events-none absolute -top-24 -left-24 w-72 h-72 bg-neon-purple/20 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 bg-neon-pink/20 rounded-full blur-3xl" />
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-md bg-night-800/80 backdrop-blur border border-white/10 rounded-2xl p-6 sm:p-8 shadow-glow"
+        variants={cardIn}
+        initial="hidden"
+        animate="show"
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="w-full max-w-md glass-card border-white/10 rounded-3xl p-6 sm:p-8 shadow-glow relative z-10"
       >
         <div className="text-center mb-6">
-          <div className="text-4xl sm:text-5xl mb-2 animate-float">🐺🌕</div>
-          <h1 className="font-display text-2xl sm:text-3xl text-moon">Ma Sói Online</h1>
-          <p className="text-white/50 text-sm mt-1">Nhập mã phòng để vào chơi cùng đồng nghiệp</p>
+          <motion.div
+            className="text-5xl sm:text-6xl mb-2 animate-float inline-block"
+            whileHover={{ rotate: [0, -8, 8, -4, 0], transition: { duration: 0.5 } }}
+          >
+            🐺🌕
+          </motion.div>
+          <h1 className="font-display text-3xl sm:text-4xl gradient-text animate-gradient-x">Ma Sói Online</h1>
+          <p className="text-white/50 text-sm mt-1.5">Rủ hội bạn vào phòng, xem ai là sói trong đêm nay 🔥</p>
         </div>
 
         <form onSubmit={handleJoin} className="space-y-4">
-          <div>
+          <motion.div variants={fieldIn} custom={0} initial="hidden" animate="show">
             <label className="text-xs uppercase tracking-wide text-white/40">Tên hiển thị</label>
             <input
               value={name}
@@ -52,11 +67,11 @@ export default function Home({ onJoined }) {
               maxLength={20}
               autoComplete="name"
               placeholder="Vd: Minh Trần"
-              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-lg px-4 py-2.5 outline-none focus:border-moon/60"
+              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-xl px-4 py-2.5 outline-none transition focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30"
             />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div variants={fieldIn} custom={1} initial="hidden" animate="show">
             <label className="text-xs uppercase tracking-wide text-white/40">Mã phòng</label>
             <input
               value={roomCode}
@@ -65,37 +80,53 @@ export default function Home({ onJoined }) {
               autoComplete="off"
               autoCapitalize="characters"
               placeholder="Vd: LANG01"
-              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-lg px-4 py-2.5 outline-none focus:border-moon/60 tracking-widest font-display"
+              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-xl px-4 py-2.5 outline-none transition focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30 tracking-widest font-display"
             />
-            <p className="text-[11px] text-white/30 mt-1">Nếu phòng chưa tồn tại, phòng sẽ được tạo tự động và bạn sẽ là chủ phòng.</p>
-          </div>
+            <p className="text-[11px] text-white/30 mt-1">Phòng chưa có? Tự tạo luôn, bạn thành chủ phòng liền 👑</p>
+          </motion.div>
 
-          <div>
+          <motion.div variants={fieldIn} custom={2} initial="hidden" animate="show">
             <label className="text-xs uppercase tracking-wide text-white/40">Avatar</label>
             <div className="flex flex-wrap gap-2 mt-1">
               {AVATARS.map((a) => (
-                <button
+                <motion.button
                   type="button"
                   key={a}
                   onClick={() => setAvatar(a)}
+                  whileHover={{ scale: 1.15, rotate: 6 }}
+                  whileTap={{ scale: 0.9 }}
                   className={`text-xl w-10 h-10 rounded-full flex items-center justify-center border transition ${
-                    avatar === a ? 'border-moon bg-moon/10 scale-110' : 'border-white/10 hover:border-white/30'
+                    avatar === a ? 'border-neon-purple bg-neon-purple/20 shadow-neon' : 'border-white/10 hover:border-white/30'
                   }`}
                 >
                   {a}
-                </button>
+                </motion.button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          {error && <div className="text-blood text-sm bg-blood/10 rounded-lg px-3 py-2">{error}</div>}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-blood text-sm bg-blood/10 rounded-lg px-3 py-2"
+            >
+              {error}
+            </motion.div>
+          )}
 
-          <button
+          <motion.button
+            variants={fieldIn}
+            custom={3}
+            initial="hidden"
+            animate="show"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.96 }}
             disabled={loading}
-            className="w-full bg-blood hover:bg-blood/80 transition rounded-lg py-3 font-display tracking-wide shadow-wolf disabled:opacity-50"
+            className="btn-gradient w-full rounded-xl py-3 font-display tracking-wide text-white disabled:opacity-50"
           >
-            {loading ? 'Đang vào phòng...' : 'Vào Phòng'}
-          </button>
+            {loading ? 'Đang vào phòng...' : '🚪 Vào Phòng'}
+          </motion.button>
         </form>
       </motion.div>
     </div>

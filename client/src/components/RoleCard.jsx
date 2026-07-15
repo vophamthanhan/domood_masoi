@@ -10,8 +10,9 @@ export default function RoleCard({ role, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
       <motion.div
-        initial={{ scale: 0.7, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        initial={{ scale: 0.7, opacity: 0, rotate: -6 }}
+        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+        transition={{ type: 'spring', bounce: 0.4 }}
         onClick={(e) => e.stopPropagation()}
         className="card-flip-scene w-64 h-80 sm:w-72 sm:h-96"
       >
@@ -20,10 +21,11 @@ export default function RoleCard({ role, onClose }) {
           onClick={() => setFlipped((f) => !f)}
         >
           <div
-            className="card-face flex items-center justify-center text-6xl border-4 border-moon/40 cursor-pointer"
+            className="card-face flex flex-col items-center justify-center gap-2 text-6xl border-4 border-moon/40 cursor-pointer animate-pulse-glow"
             style={{ background: 'linear-gradient(160deg,#1c1f3d,#05050d)' }}
           >
-            🌕
+            <span className="animate-float">🌕</span>
+            <span className="text-xs font-display tracking-widest text-white/40">Chạm để lật</span>
           </div>
           <div
             className="card-face card-back flex flex-col items-center justify-center gap-3 p-6 text-center cursor-pointer"
