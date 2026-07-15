@@ -12,7 +12,7 @@ const PHASE_LABEL = {
 
 const DURATION_PRESETS = [60, 120, 180, 300];
 
-export default function HostControlPanel({ room, allRoles, onAdvance, onForceSkipHunter }) {
+function HostControlPanel({ room, allRoles, onAdvance, onForceSkipHunter }) {
   const [busy, setBusy] = useState(false);
   const [discussionSeconds, setDiscussionSeconds] = useState(120);
   const pendingHunter = room.phase_data?.pending_hunter;
@@ -91,3 +91,5 @@ export default function HostControlPanel({ room, allRoles, onAdvance, onForceSki
     </div>
   );
 }
+
+export default React.memo(HostControlPanel);

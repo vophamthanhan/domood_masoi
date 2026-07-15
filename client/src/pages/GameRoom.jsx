@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../lib/functions.js';
 import { sfx, isMuted, setMuted } from '../lib/sound.js';
@@ -17,7 +17,7 @@ import { ROLES_INFO } from '../data/rolesInfo.js';
 
 export default function GameRoom({ room, players, logs, chat, votes, myPlayerId, userId, onLeave }) {
   const isHost = room.host_user_id === userId;
-  const myPlayer = players.find((p) => p.id === myPlayerId);
+  const myPlayer = useMemo(() => players.find((p) => p.id === myPlayerId), [players, myPlayerId]);
   const [myRole, setMyRole] = useState(null);
   const [allRoles, setAllRoles] = useState([]);
   const [showCard, setShowCard] = useState(false);
@@ -64,22 +64,25 @@ export default function GameRoom({ room, players, logs, chat, votes, myPlayerId,
     setMuted(!next);
   }
 
-  async function handleAdvance(opts) {
+  const handleAdvance = useCallback(async (opts) => {
     await api.advancePhase(room.code, opts);
-  }
-  async function handleForceSkipHunter() {
+  }, [room.code]);
+  const handleForceSkipHunter = useCallback(async () => {
     await api.advancePhase(room.code, { forceSkipHunter: true });
-  }
-  async function handleExtendTimer(extendSeconds) {
+  }, [room.code]);
+  const handleExtendTimer = useCallback(async (extendSeconds) => {
     await api.advancePhase(room.code, { extendSeconds });
-  }
-  async function handleHunterShoot() {
+  }, [room.code]);
+  const handleHunterShoot = useCallback(async () => {
     if (!hunterTarget) return;
     await api.hunterShoot(room.code, hunterTarget);
     setHunterTarget('');
-  }
+  }, [room.code, hunterTarget]);
 
   const pendingHunterIsMe = room.phase_data?.pending_hunter === myPlayerId;
+  const runoffKey = JSON.stringify(room.phase_data?.runoff_candidates ?? null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const runoffCandidates = useMemo(() => room.phase_data?.runoff_candidates, [runoffKey]);
 
   if (room.phase === 'ended') {
     return <WinnerScreen winner={room.winner} players={allRoles} onLeave={onLeave} />;
@@ -181,7 +184,7 @@ export default function GameRoom({ room, players, logs, chat, votes, myPlayerId,
                 </div>
               )}
               <ChatBox roomCode={room.code} chat={chat} viewerAlive={myPlayer?.is_alive !== false} isMute={myRole?.role === 'mute'} />
-              <VotingPanel roomCode={room.code} players={players} votes={votes} myPlayer={myPlayer} runoffCandidates={room.phase_data?.runoff_candidates} />
+              <VotingPanel roomCode={room.code} players={players} votes={votes} myPlayer={myPlayer} runoffCandidates={runoffCandidates} />
             </>
           )}
 

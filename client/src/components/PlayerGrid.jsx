@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function PlayerGrid({ players, myPlayerId, revealTeams }) {
+function PlayerGrid({ players, myPlayerId, revealTeams }) {
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
       <AnimatePresence>
@@ -35,3 +35,5 @@ export default function PlayerGrid({ players, myPlayerId, revealTeams }) {
     </div>
   );
 }
+
+export default React.memo(PlayerGrid);

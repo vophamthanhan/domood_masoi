@@ -6,7 +6,7 @@ import { ROLES_INFO } from '../data/rolesInfo.js';
 
 const WOLF_ROLES = ['werewolf', 'alphawolf', 'disguisedwolf'];
 
-export default function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
+function RoleActionPanel({ roomCode, myRole, currentRole, players, onActed }) {
   const [target, setTarget] = useState('');
   const [target2, setTarget2] = useState('');
   const [busy, setBusy] = useState(false);
@@ -216,6 +216,8 @@ export default function RoleActionPanel({ roomCode, myRole, currentRole, players
     </motion.div>
   );
 }
+
+export default React.memo(RoleActionPanel);
 
 function PlayerPicker({ players, value, onChange, label }) {
   return (

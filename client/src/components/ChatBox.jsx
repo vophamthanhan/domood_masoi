@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { api } from '../lib/functions.js';
 
-export default function ChatBox({ roomCode, chat, viewerAlive = true, isMute = false }) {
+function ChatBox({ roomCode, chat, viewerAlive = true, isMute = false }) {
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const endRef = useRef(null);
@@ -59,3 +59,5 @@ export default function ChatBox({ roomCode, chat, viewerAlive = true, isMute = f
     </div>
   );
 }
+
+export default React.memo(ChatBox);

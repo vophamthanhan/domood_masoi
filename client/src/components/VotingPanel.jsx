@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../lib/functions.js';
 
-export default function VotingPanel({ roomCode, players, votes, myPlayer, runoffCandidates }) {
+function VotingPanel({ roomCode, players, votes, myPlayer, runoffCandidates }) {
   const [selected, setSelected] = useState(null);
   const [busy, setBusy] = useState(false);
   const hasRunoff = Array.isArray(runoffCandidates) && runoffCandidates.length > 0;
@@ -66,3 +66,5 @@ export default function VotingPanel({ roomCode, players, votes, myPlayer, runoff
     </div>
   );
 }
+
+export default React.memo(VotingPanel);

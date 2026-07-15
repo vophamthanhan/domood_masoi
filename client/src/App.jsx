@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { ensureAnonSession, supabase } from './lib/supabaseClient.js';
-import Home from './pages/Home.jsx';
-import WaitingRoom from './pages/WaitingRoom.jsx';
-import GameRoom from './pages/GameRoom.jsx';
 import { useRoom } from './hooks/useRoom.js';
+
+const Home = lazy(() => import('./pages/Home.jsx'));
+const WaitingRoom = lazy(() => import('./pages/WaitingRoom.jsx'));
+const GameRoom = lazy(() => import('./pages/GameRoom.jsx'));
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -65,31 +66,39 @@ export default function App() {
         </div>
       )}
       <div className="relative z-10">
-        {!roomCode && <Home userId={userId} onJoined={handleJoined} />}
-        {roomCode && room && room.phase === 'lobby' && (
-          <WaitingRoom
-            room={room}
-            players={players}
-            myPlayerId={myPlayerId}
-            userId={userId}
-            onLeave={handleLeave}
-          />
-        )}
-        {roomCode && room && room.phase !== 'lobby' && (
-          <GameRoom
-            room={room}
-            players={players}
-            logs={logs}
-            chat={chat}
-            votes={votes}
-            myPlayerId={myPlayerId}
-            userId={userId}
-            onLeave={handleLeave}
-          />
-        )}
-        {roomCode && !room && (
-          <div className="min-h-screen flex items-center justify-center font-display text-lg">Đang tải phòng...</div>
-        )}
+        <Suspense
+          fallback={
+            <div className="min-h-screen flex items-center justify-center text-moon font-display animate-pulse">
+              Đang mở cổng làng...
+            </div>
+          }
+        >
+          {!roomCode && <Home userId={userId} onJoined={handleJoined} />}
+          {roomCode && room && room.phase === 'lobby' && (
+            <WaitingRoom
+              room={room}
+              players={players}
+              myPlayerId={myPlayerId}
+              userId={userId}
+              onLeave={handleLeave}
+            />
+          )}
+          {roomCode && room && room.phase !== 'lobby' && (
+            <GameRoom
+              room={room}
+              players={players}
+              logs={logs}
+              chat={chat}
+              votes={votes}
+              myPlayerId={myPlayerId}
+              userId={userId}
+              onLeave={handleLeave}
+            />
+          )}
+          {roomCode && !room && (
+            <div className="min-h-screen flex items-center justify-center font-display text-lg">Đang tải phòng...</div>
+          )}
+        </Suspense>
       </div>
     </div>
   );

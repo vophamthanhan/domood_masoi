@@ -25,6 +25,7 @@ export default function EffectOverlay({ logs }) {
       firstRun.current = false;
       return;
     }
+    const timers = [];
     for (const log of logs) {
       if (seenIds.current.has(log.id)) continue;
       seenIds.current.add(log.id);
@@ -33,9 +34,10 @@ export default function EffectOverlay({ logs }) {
       if (effect) {
         setActive({ id: log.id, ...effect });
         effect.sound?.();
-        setTimeout(() => setActive((cur) => (cur?.id === log.id ? null : cur)), 1600);
+        timers.push(setTimeout(() => setActive((cur) => (cur?.id === log.id ? null : cur)), 1600));
       }
     }
+    return () => timers.forEach(clearTimeout);
   }, [logs]);
 
   return (

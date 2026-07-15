@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function GameLog({ logs }) {
+function GameLog({ logs }) {
   return (
     <div className="bg-night-800/80 border border-white/10 rounded-2xl p-4">
       <h3 className="font-display mb-2">📜 Diễn biến</h3>
@@ -22,3 +22,5 @@ export default function GameLog({ logs }) {
     </div>
   );
 }
+
+export default React.memo(GameLog);

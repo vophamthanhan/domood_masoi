@@ -1,6 +1,8 @@
 const CACHE_NAME = 'ma-soi-v1';
+const PRECACHE_URLS = ['/', '/manifest.webmanifest', '/icon-192.png'];
 
-self.addEventListener('install', () => {
+self.addEventListener('install', (event) => {
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)));
   self.skipWaiting();
 });
 
