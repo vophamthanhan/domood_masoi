@@ -20,7 +20,7 @@ async function call(fnName, payload) {
 
 export const api = {
   joinRoom: (roomCode, name, avatar) => call('join-room', { roomCode, name, avatar }),
-  startGame: (roomCode, extraRoles, hostPlays = true) => call('start-game', { roomCode, extraRoles, hostPlays }),
+  startGame: (roomCode, extraRoles, hostPlays = true, autoMode) => call('start-game', { roomCode, extraRoles, hostPlays, autoMode }),
   getMyRole: (roomCode) => call('get-my-role', { roomCode }),
   getAllRoles: (roomCode) => call('get-all-roles', { roomCode }),
   submitNightAction: (roomCode, actionType, targetPlayerId, targetPlayerId2) =>
@@ -31,6 +31,7 @@ export const api = {
       forceSkipHunter: opts.forceSkipHunter,
       discussionSeconds: opts.discussionSeconds,
       extendSeconds: opts.extendSeconds,
+      auto: opts.auto,
     }),
   castVote: (roomCode, targetPlayerId) => call('cast-vote', { roomCode, targetPlayerId }),
   sendChat: (roomCode, content) => call('send-chat', { roomCode, content }),

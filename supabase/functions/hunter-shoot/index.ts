@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
       message: `💥 Thợ Săn ${me.name} đã bắn hạ ${target.name} trước khi trút hơi thở cuối cùng!`,
       meta: { type: 'hunter_shot' },
     });
-    await db.from('rooms').update({ phase_data: { ...room.phase_data, pending_hunter: null } }).eq('code', code);
+    await db.from('rooms').update({ phase_data: { ...room.phase_data, pending_hunter: null, pending_hunter_deadline_at: null } }).eq('code', code);
 
     return json({ ok: true });
   } catch (e) {

@@ -1,4 +1,19 @@
 import { adminClient, getCallerUserId, json, corsHeaders } from '../_shared/utils.js';
+import { getAutoSettings, resolveVote } from '../_shared/advanceLogic.js';
+
+// Chế độ tự động: ngay khi mọi người còn quyền bỏ phiếu đã bỏ phiếu xong, chốt kết quả liền,
+// không cần chờ hết giờ.
+async function maybeAutoAdvance(db, code, room) {
+  if (!getAutoSettings(room)) return;
+  const { data: players } = await db.from('players').select('*').eq('room_code', code);
+  const eligible = (players || []).filter((p) => p.is_alive && p.can_vote);
+  if (!eligible.length) return;
+  const { data: votes } = await db.from('votes').select('voter_player_id').eq('room_code', code).eq('day_number', room.day_number);
+  const votedIds = new Set((votes || []).map((v) => v.voter_player_id));
+  if (eligible.every((p) => votedIds.has(p.id))) {
+    await resolveVote(db, code, room, players);
+  }
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -32,6 +47,7 @@ Deno.serve(async (req) => {
       { onConflict: 'room_code,day_number,voter_player_id' },
     );
 
+    await maybeAutoAdvance(db, code, room);
     return json({ ok: true });
   } catch (e) {
     return json({ error: String(e) }, 500);

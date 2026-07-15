@@ -1,5 +1,6 @@
 import { adminClient, getCallerUserId, json, corsHeaders } from '../_shared/utils.js';
 import { ROLES, buildRolePool } from '../_shared/roles.js';
+import { AUTO_DEFAULTS, advanceNightCursor } from '../_shared/advanceLogic.js';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -7,7 +8,7 @@ Deno.serve(async (req) => {
     const userId = await getCallerUserId(req);
     if (!userId) return json({ error: 'Chưa đăng nhập' }, 401);
 
-    const { roomCode, extraRoles = [], hostPlays = true } = await req.json();
+    const { roomCode, extraRoles = [], hostPlays = true, autoMode } = await req.json();
     const code = (roomCode || '').trim().toUpperCase();
     const db = adminClient();
 
@@ -39,15 +40,17 @@ Deno.serve(async (req) => {
     }
 
     const nightOrderRoles = pool.filter((r, i, arr) => arr.indexOf(r) === i); // roles có mặt trong ván
+    const autoModeSettings = autoMode?.enabled ? { ...AUTO_DEFAULTS, ...autoMode, enabled: true } : { enabled: false };
 
+    const initialPhaseData = { subphase_index: 0, present_roles: nightOrderRoles, pending_hunter: null, __cursor: -1 };
     await db
       .from('rooms')
       .update({
         phase: 'night',
         night_number: 1,
         day_number: 0,
-        settings: { extraRoles, hostPlays },
-        phase_data: { subphase_index: 0, present_roles: nightOrderRoles, pending_hunter: null },
+        settings: { extraRoles, hostPlays, autoMode: autoModeSettings },
+        phase_data: initialPhaseData,
         winner: null,
       })
       .eq('code', code);
@@ -56,6 +59,14 @@ Deno.serve(async (req) => {
       room_code: code,
       message: `Ván đấu bắt đầu với ${players.length} người chơi. Màn đêm buông xuống...`,
     });
+
+    if (autoModeSettings.enabled) {
+      // Tính luôn bước đêm đầu tiên ngay khi bật chế độ tự động, tránh phải chờ một vòng trống
+      // (không có hạn giờ) mà hệ thống không biết khi nào nên tự chuyển.
+      const { data: freshRoom } = await db.from('rooms').select('*').eq('code', code).maybeSingle();
+      const { data: freshPlayers } = await db.from('players').select('*').eq('room_code', code);
+      await advanceNightCursor(db, code, freshRoom, freshPlayers || []);
+    }
 
     return json({ ok: true });
   } catch (e) {

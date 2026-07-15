@@ -14,9 +14,11 @@ import DiscussionTimer from '../components/DiscussionTimer.jsx';
 import EffectOverlay from '../components/EffectOverlay.jsx';
 import RoleCard from '../components/RoleCard.jsx';
 import { ROLES_INFO } from '../data/rolesInfo.js';
+import { useAutoAdvance } from '../hooks/useAutoAdvance.js';
 
 export default function GameRoom({ room, players, logs, chat, votes, myPlayerId, userId, onLeave }) {
   const isHost = room.host_user_id === userId;
+  const hostPlays = room.settings?.hostPlays !== false;
   const myPlayer = useMemo(() => players.find((p) => p.id === myPlayerId), [players, myPlayerId]);
   const [myRole, setMyRole] = useState(null);
   const [allRoles, setAllRoles] = useState([]);
@@ -32,13 +34,18 @@ export default function GameRoom({ room, players, logs, chat, votes, myPlayerId,
     } catch (_) {}
   }, [room.code]);
 
+  // Host chỉ được xem toàn bộ vai của người khác khi họ KHÔNG chơi (thuần quản trò) - nếu host cũng
+  // chơi, xem trước vai người khác là lợi thế không công bằng, nên chặn cả việc fetch (không chỉ ẩn UI).
+  const canSeeAllRolesLive = isHost && !hostPlays;
   const refreshAllRoles = useCallback(async () => {
-    if (!isHost && room.phase !== 'ended') return;
+    if (!canSeeAllRolesLive && room.phase !== 'ended') return;
     try {
       const data = await api.getAllRoles(room.code);
       setAllRoles(data.players);
     } catch (_) {}
-  }, [room.code, isHost, room.phase]);
+  }, [room.code, canSeeAllRolesLive, room.phase]);
+
+  useAutoAdvance(room);
 
   useEffect(() => {
     refreshMyRole();
@@ -85,7 +92,7 @@ export default function GameRoom({ room, players, logs, chat, votes, myPlayerId,
   const runoffCandidates = useMemo(() => room.phase_data?.runoff_candidates, [runoffKey]);
 
   if (room.phase === 'ended') {
-    return <WinnerScreen winner={room.winner} players={allRoles} onLeave={onLeave} hostPlays={room.settings?.hostPlays !== false} />;
+    return <WinnerScreen winner={room.winner} players={allRoles} onLeave={onLeave} hostPlays={hostPlays} />;
   }
 
   return (

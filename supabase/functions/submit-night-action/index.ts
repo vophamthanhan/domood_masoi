@@ -1,5 +1,17 @@
 import { adminClient, getCallerUserId, json, corsHeaders } from '../_shared/utils.js';
 import { NIGHT_ORDER, WOLF_KILL_ROLES } from '../_shared/roles.js';
+import { getAutoSettings, isNightStepComplete, advanceNightCursor } from '../_shared/advanceLogic.js';
+
+// Chế độ tự động: ngay khi mọi người cần hành động ở bước đêm hiện tại đã hành động xong,
+// chuyển bước liền, không cần chờ hết giờ AFK.
+async function maybeAutoAdvance(db, code, room) {
+  if (!getAutoSettings(room)) return;
+  const { data: freshPlayers } = await db.from('players').select('*').eq('room_code', code);
+  const alive = (freshPlayers || []).filter((p) => p.is_alive);
+  if (await isNightStepComplete(db, code, room, alive)) {
+    await advanceNightCursor(db, code, room, freshPlayers || []);
+  }
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -43,6 +55,7 @@ Deno.serve(async (req) => {
         { room_code: code, night_number: room.night_number, role: 'thief', actor_player_id: me.id, action_type: 'thief_swap', target_player_id: targetPlayerId },
         { onConflict: 'room_code,night_number,actor_player_id,action_type' },
       );
+      await maybeAutoAdvance(db, code, room);
       return json({ ok: true, swapped: true });
     }
 
@@ -59,6 +72,7 @@ Deno.serve(async (req) => {
         message: '💘 Có 2 người vừa phải lòng nhau trong bóng tối...',
         meta: { type: 'lovers_linked' },
       });
+      await maybeAutoAdvance(db, code, room);
       return json({ ok: true, linked: true });
     }
 
@@ -94,9 +108,11 @@ Deno.serve(async (req) => {
       const { data: target } = await db.from('players').select('name,team,role').eq('id', targetPlayerId).maybeSingle();
       // Sói Bà Ba đánh lừa Tiên Tri: luôn hiện ra là phe Dân Làng
       const apparentTeam = target?.role === 'disguisedwolf' ? 'village' : target?.team;
+      await maybeAutoAdvance(db, code, room);
       return json({ ok: true, seer_result: { name: target?.name, team: apparentTeam } });
     }
 
+    await maybeAutoAdvance(db, code, room);
     return json({ ok: true });
   } catch (e) {
     return json({ error: String(e) }, 500);

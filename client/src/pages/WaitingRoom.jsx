@@ -6,10 +6,26 @@ import { calcWolfQuota } from '../gameHelpers.js';
 
 const cardIn = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
+const AUTO_FIELDS = [
+  { key: 'nightStepSeconds', label: '🌙 Mỗi vai đêm suy nghĩ', presets: [15, 25, 40] },
+  { key: 'voteSeconds', label: '🗳️ Thời gian bỏ phiếu', presets: [30, 45, 60] },
+  { key: 'hunterSeconds', label: '🏹 Chờ Thợ Săn bắn', presets: [20, 30, 45] },
+  { key: 'resultSeconds', label: '⚖️ Dừng xem kết quả', presets: [4, 6, 10] },
+];
+
 export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave }) {
   const isHost = room.host_user_id === userId;
   const [extraRoles, setExtraRoles] = useState([]);
   const [hostPlays, setHostPlays] = useState(true);
+  const [autoMode, setAutoMode] = useState({
+    enabled: false,
+    nightStepSeconds: 25,
+    voteSeconds: 45,
+    hunterSeconds: 30,
+    resultSeconds: 6,
+    revealSeconds: 4,
+    discussionSeconds: 120,
+  });
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,7 +41,7 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
     setError('');
     setStarting(true);
     try {
-      await api.startGame(room.code, extraRoles, hostPlays);
+      await api.startGame(room.code, extraRoles, hostPlays, autoMode);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -89,6 +105,58 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
                 <motion.span layout transition={{ type: 'spring', stiffness: 500, damping: 30 }} className={`block w-5 h-5 rounded-full bg-white ${hostPlays ? '' : 'ml-4'}`} />
               </span>
             </button>
+          )}
+
+          {isHost && hostPlays && (
+            <div className="mt-3 bg-night-900/60 border border-white/10 rounded-xl p-3">
+              <button
+                type="button"
+                onClick={() => setAutoMode((a) => ({ ...a, enabled: !a.enabled }))}
+                className="w-full flex items-center justify-between gap-2 text-left"
+              >
+                <span className="text-xs text-white/70">
+                  🤖 Chế độ tự động {autoMode.enabled ? '— hệ thống tự chuyển pha, bạn khỏi cần bấm' : '(tắt: bạn tự bấm chuyển pha như thường)'}
+                </span>
+                <span className={`shrink-0 w-10 h-6 rounded-full p-0.5 transition ${autoMode.enabled ? 'bg-gradient-to-r from-neon-pink to-neon-purple' : 'bg-white/10'}`}>
+                  <motion.span layout transition={{ type: 'spring', stiffness: 500, damping: 30 }} className={`block w-5 h-5 rounded-full bg-white ${autoMode.enabled ? 'ml-4' : ''}`} />
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {autoMode.enabled && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-3 space-y-2.5">
+                      {AUTO_FIELDS.map((f) => (
+                        <div key={f.key}>
+                          <p className="text-[11px] text-white/40 mb-1">{f.label}</p>
+                          <div className="flex gap-1.5">
+                            {f.presets.map((s) => (
+                              <motion.button
+                                key={s}
+                                type="button"
+                                whileHover={{ scale: 1.06 }}
+                                whileTap={{ scale: 0.94 }}
+                                onClick={() => setAutoMode((a) => ({ ...a, [f.key]: s }))}
+                                className={`text-[11px] rounded-full px-2.5 py-1 border transition ${
+                                  autoMode[f.key] === s ? 'border-neon-purple bg-neon-purple/20 text-white' : 'border-white/10 text-white/50 hover:border-white/30'
+                                }`}
+                              >
+                                {s}s
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           )}
         </motion.div>
 
