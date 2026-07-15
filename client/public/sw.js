@@ -27,7 +27,7 @@ self.addEventListener('fetch', (event) => {
       } catch (err) {
         const cached = await cache.match(request);
         if (cached) return cached;
-        throw err;
+        return Response.error();
       }
     }),
   );
