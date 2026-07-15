@@ -1,0 +1,96 @@
+import React, { useEffect, useState, useRef } from 'react';
+import { ensureAnonSession, supabase } from './lib/supabaseClient.js';
+import Home from './pages/Home.jsx';
+import WaitingRoom from './pages/WaitingRoom.jsx';
+import GameRoom from './pages/GameRoom.jsx';
+import { useRoom } from './hooks/useRoom.js';
+
+export default function App() {
+  const [ready, setReady] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [roomCode, setRoomCode] = useState(() => localStorage.getItem('ms_room_code') || '');
+  const [myPlayerId, setMyPlayerId] = useState(() => localStorage.getItem('ms_player_id') || '');
+  const hasLoadedRoomOnce = useRef(false);
+
+  useEffect(() => {
+    ensureAnonSession().then((session) => {
+      setUserId(session.user.id);
+      setReady(true);
+    });
+  }, []);
+
+  const { room, players, logs, chat, votes, connectionStatus } = useRoom(roomCode || null);
+
+  function handleJoined(code, playerId) {
+    hasLoadedRoomOnce.current = false;
+    setRoomCode(code);
+    setMyPlayerId(playerId);
+    localStorage.setItem('ms_room_code', code);
+    localStorage.setItem('ms_player_id', playerId);
+  }
+
+  function handleLeave() {
+    hasLoadedRoomOnce.current = false;
+    setRoomCode('');
+    setMyPlayerId('');
+    localStorage.removeItem('ms_room_code');
+    localStorage.removeItem('ms_player_id');
+  }
+
+  // Nếu phòng đã tải thành công ít nhất 1 lần rồi bỗng biến mất (bị xoá / mã sai sau reload) -> quay về sảnh
+  useEffect(() => {
+    if (room) hasLoadedRoomOnce.current = true;
+    else if (roomCode && hasLoadedRoomOnce.current) {
+      handleLeave();
+    }
+  }, [room, roomCode]);
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-moon font-display animate-pulse">
+        Đang mở cổng làng...
+      </div>
+    );
+  }
+
+  const showReconnecting = roomCode && room && connectionStatus && connectionStatus !== 'SUBSCRIBED';
+
+  return (
+    <div className="relative min-h-screen overflow-hidden">
+      <div className="stars" />
+      <div className="fog" />
+      {showReconnecting && (
+        <div className="fixed top-2 left-1/2 -translate-x-1/2 z-50 bg-orange-500/90 text-white text-xs px-3 py-1.5 rounded-full shadow">
+          🔄 Đang kết nối lại...
+        </div>
+      )}
+      <div className="relative z-10">
+        {!roomCode && <Home userId={userId} onJoined={handleJoined} />}
+        {roomCode && room && room.phase === 'lobby' && (
+          <WaitingRoom
+            room={room}
+            players={players}
+            myPlayerId={myPlayerId}
+            userId={userId}
+            onLeave={handleLeave}
+          />
+        )}
+        {roomCode && room && room.phase !== 'lobby' && (
+          <GameRoom
+            room={room}
+            players={players}
+            logs={logs}
+            chat={chat}
+            votes={votes}
+            myPlayerId={myPlayerId}
+            userId={userId}
+            onLeave={handleLeave}
+          />
+        )}
+        {roomCode && !room && (
+          <div className="min-h-screen flex items-center justify-center font-display text-lg">Đang tải phòng...</div>
+        )}
+      </div>
+    </div>
+  );
+}
