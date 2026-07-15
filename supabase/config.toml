@@ -1,4 +1,1 @@
 project_id = "ma-soi-online"
-
-[functions]
-verify_jwt = false
