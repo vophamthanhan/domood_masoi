@@ -7,10 +7,10 @@ import { calcWolfQuota } from '../gameHelpers.js';
 const cardIn = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 const AUTO_FIELDS = [
-  { key: 'nightStepSeconds', label: '🌙 Mỗi vai đêm suy nghĩ', presets: [15, 25, 40] },
-  { key: 'voteSeconds', label: '🗳️ Thời gian bỏ phiếu', presets: [30, 45, 60] },
-  { key: 'hunterSeconds', label: '🏹 Chờ Thợ Săn bắn', presets: [20, 30, 45] },
-  { key: 'resultSeconds', label: '⚖️ Dừng xem kết quả', presets: [4, 6, 10] },
+  { key: 'nightStepSeconds', label: '🌙 Mỗi vai đêm suy nghĩ', min: 5, max: 120 },
+  { key: 'voteSeconds', label: '🗳️ Thời gian bỏ phiếu', min: 10, max: 180 },
+  { key: 'hunterSeconds', label: '🏹 Chờ Thợ Săn bắn', min: 10, max: 120 },
+  { key: 'resultSeconds', label: '⚖️ Dừng xem kết quả', min: 2, max: 30 },
 ];
 
 export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave }) {
@@ -132,23 +132,25 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
                   >
                     <div className="mt-3 space-y-2.5">
                       {AUTO_FIELDS.map((f) => (
-                        <div key={f.key}>
-                          <p className="text-[11px] text-white/40 mb-1">{f.label}</p>
-                          <div className="flex gap-1.5">
-                            {f.presets.map((s) => (
-                              <motion.button
-                                key={s}
-                                type="button"
-                                whileHover={{ scale: 1.06 }}
-                                whileTap={{ scale: 0.94 }}
-                                onClick={() => setAutoMode((a) => ({ ...a, [f.key]: s }))}
-                                className={`text-[11px] rounded-full px-2.5 py-1 border transition ${
-                                  autoMode[f.key] === s ? 'border-neon-purple bg-neon-purple/20 text-white' : 'border-white/10 text-white/50 hover:border-white/30'
-                                }`}
-                              >
-                                {s}s
-                              </motion.button>
-                            ))}
+                        <div key={f.key} className="flex items-center justify-between gap-3">
+                          <p className="text-[11px] text-white/40 flex-1">{f.label}</p>
+                          <div className="flex items-center gap-1 bg-night-900 border border-white/10 rounded-lg pr-2 focus-within:border-neon-purple focus-within:ring-2 focus-within:ring-neon-purple/30 transition">
+                            <input
+                              type="number"
+                              min={f.min}
+                              max={f.max}
+                              value={autoMode[f.key]}
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                setAutoMode((a) => ({ ...a, [f.key]: v === '' ? '' : Number(v) }));
+                              }}
+                              onBlur={(e) => {
+                                const v = Math.min(f.max, Math.max(f.min, Number(e.target.value) || f.min));
+                                setAutoMode((a) => ({ ...a, [f.key]: v }));
+                              }}
+                              className="w-14 bg-transparent text-sm text-right px-2 py-1 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <span className="text-[11px] text-white/40">giây</span>
                           </div>
                         </div>
                       ))}
