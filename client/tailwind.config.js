@@ -21,7 +21,9 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Cinzel"', 'serif'],
+        // Cinzel không có glyph dấu tiếng Việt (ư, ơ, ...) nên trình duyệt phải fallback font khác
+        // cho các ký tự đó, gây lệch/xấu. Playfair Display vẫn kịch tính/bí ẩn nhưng hỗ trợ đủ dấu.
+        display: ['"Playfair Display"', 'serif'],
         body: ['"Be Vietnam Pro"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {

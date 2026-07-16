@@ -13,7 +13,7 @@ html, body, #root {
   font-family: 'Be Vietnam Pro', system-ui, sans-serif;
 }
 
-.font-display { font-family: 'Cinzel', serif; }
+.font-display { font-family: 'Playfair Display', serif; }
 
 .gradient-text {
   background: linear-gradient(135deg, #EB480D 0%, #b0203a 55%, #f6e7b4 100%);
