@@ -13,7 +13,7 @@ function GameLog({ logs }) {
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.25 }}
-              className="text-white/70 border-l-2 border-neon-purple/40 pl-2"
+              className="text-white/70 border-l-2 border-brand/40 pl-2"
             >
               {l.message}
             </motion.div>

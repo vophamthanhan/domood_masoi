@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 export default function NightOverlay({ label }) {
   return (
     <div className="relative flex flex-col items-center justify-center py-14 overflow-hidden rounded-2xl bg-gradient-to-b from-night-900 to-night-800 border border-white/10">
-      <div className="pointer-events-none absolute inset-0 bg-gz-gradient opacity-[0.06] animate-gradient-x" />
+      <div className="pointer-events-none absolute inset-0 bg-brand-gradient opacity-[0.06] animate-gradient-x" />
       <motion.div
         initial={{ y: 40, opacity: 0, scale: 0.7 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}

@@ -81,8 +81,8 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
                 >
                   <span className="text-xl">{p.avatar}</span>
                   <span className="flex-1 truncate">{p.name}</span>
-                  {p.is_host && <span className="text-xs bg-gradient-to-r from-neon-pink to-neon-purple text-white px-2 py-0.5 rounded-full">👑 Chủ phòng</span>}
-                  {p.id === myPlayerId && <span className="text-xs text-neon-cyan">(bạn)</span>}
+                  {p.is_host && <span className="text-xs bg-gradient-to-r from-brand-light to-brand text-white px-2 py-0.5 rounded-full">👑 Chủ phòng</span>}
+                  {p.id === myPlayerId && <span className="text-xs text-moon">(bạn)</span>}
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -96,12 +96,12 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
             <button
               type="button"
               onClick={() => setHostPlays((v) => !v)}
-              className="mt-3 w-full flex items-center justify-between gap-2 bg-night-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-left hover:border-neon-purple/40 transition"
+              className="mt-3 w-full flex items-center justify-between gap-2 bg-night-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-left hover:border-brand/40 transition"
             >
               <span className="text-xs text-white/70">
                 {hostPlays ? '🎮 Bạn vừa điều khiển ván vừa chơi bình thường' : '🎙️ Bạn chỉ làm quản trò, không nhận vai'}
               </span>
-              <span className={`shrink-0 w-10 h-6 rounded-full p-0.5 transition ${hostPlays ? 'bg-white/10' : 'bg-gradient-to-r from-neon-pink to-neon-purple'}`}>
+              <span className={`shrink-0 w-10 h-6 rounded-full p-0.5 transition ${hostPlays ? 'bg-white/10' : 'bg-gradient-to-r from-brand-light to-brand'}`}>
                 <motion.span layout transition={{ type: 'spring', stiffness: 500, damping: 30 }} className={`block w-5 h-5 rounded-full bg-white ${hostPlays ? '' : 'ml-4'}`} />
               </span>
             </button>
@@ -117,7 +117,7 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
                 <span className="text-xs text-white/70">
                   🤖 Chế độ tự động {autoMode.enabled ? '— hệ thống tự chuyển pha, bạn khỏi cần bấm' : '(tắt: bạn tự bấm chuyển pha như thường)'}
                 </span>
-                <span className={`shrink-0 w-10 h-6 rounded-full p-0.5 transition ${autoMode.enabled ? 'bg-gradient-to-r from-neon-pink to-neon-purple' : 'bg-white/10'}`}>
+                <span className={`shrink-0 w-10 h-6 rounded-full p-0.5 transition ${autoMode.enabled ? 'bg-gradient-to-r from-brand-light to-brand' : 'bg-white/10'}`}>
                   <motion.span layout transition={{ type: 'spring', stiffness: 500, damping: 30 }} className={`block w-5 h-5 rounded-full bg-white ${autoMode.enabled ? 'ml-4' : ''}`} />
                 </span>
               </button>
@@ -134,7 +134,7 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
                       {AUTO_FIELDS.map((f) => (
                         <div key={f.key} className="flex items-center justify-between gap-3">
                           <p className="text-[11px] text-white/40 flex-1">{f.label}</p>
-                          <div className="flex items-center gap-1 bg-night-900 border border-white/10 rounded-lg pr-2 focus-within:border-neon-purple focus-within:ring-2 focus-within:ring-neon-purple/30 transition">
+                          <div className="flex items-center gap-1 bg-night-900 border border-white/10 rounded-lg pr-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/30 transition">
                             <input
                               type="number"
                               min={f.min}
@@ -189,7 +189,7 @@ export default function WaitingRoom({ room, players, myPlayerId, userId, onLeave
                   whileTap={isHost ? { scale: 0.94 } : {}}
                   className={`text-xs rounded-full px-3 py-1.5 flex items-center gap-1 border transition ${
                     extraRoles.includes(k)
-                      ? 'bg-gradient-to-r from-blood to-neon-pink border-transparent text-white shadow-wolf'
+                      ? 'bg-gradient-to-r from-blood to-brand-light border-transparent text-white shadow-wolf'
                       : 'bg-night-900 border-white/10 text-white/60 hover:border-white/30'
                   } disabled:opacity-40`}
                   title={ROLES_INFO[k].desc}

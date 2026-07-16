@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { ensureAnonSession, supabase } from './lib/supabaseClient.js';
 import { useRoom } from './hooks/useRoom.js';
+import SplashScreen from './components/SplashScreen.jsx';
 
 const Home = lazy(() => import('./pages/Home.jsx'));
 const WaitingRoom = lazy(() => import('./pages/WaitingRoom.jsx'));
@@ -47,11 +48,7 @@ export default function App() {
   }, [room, roomCode]);
 
   if (!ready) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-moon font-display animate-pulse">
-        Đang mở cổng làng...
-      </div>
-    );
+    return <SplashScreen label="Đang mở cổng làng..." />;
   }
 
   const showReconnecting = roomCode && room && connectionStatus && connectionStatus !== 'SUBSCRIBED';
@@ -66,13 +63,7 @@ export default function App() {
         </div>
       )}
       <div className="relative z-10">
-        <Suspense
-          fallback={
-            <div className="min-h-screen flex items-center justify-center text-moon font-display animate-pulse">
-              Đang mở cổng làng...
-            </div>
-          }
-        >
+        <Suspense fallback={<SplashScreen label="Đang mở cổng làng..." />}>
           {!roomCode && <Home userId={userId} onJoined={handleJoined} />}
           {roomCode && room && room.phase === 'lobby' && (
             <WaitingRoom
@@ -95,9 +86,7 @@ export default function App() {
               onLeave={handleLeave}
             />
           )}
-          {roomCode && !room && (
-            <div className="min-h-screen flex items-center justify-center font-display text-lg">Đang tải phòng...</div>
-          )}
+          {roomCode && !room && <SplashScreen label="Đang tải phòng..." />}
         </Suspense>
       </div>
     </div>

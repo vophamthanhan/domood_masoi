@@ -12,10 +12,12 @@ export default {
         },
         blood: '#b0203a',
         moon: '#f6e7b4',
-        neon: {
-          pink: '#ff5ca8',
-          purple: '#8b5cf6',
-          cyan: '#5eead4',
+        // Màu thương hiệu Domood (lấy chính xác từ logo #EB480D) - dùng làm điểm nhấn hiện đại,
+        // kết hợp cùng blood (đỏ máu) + moon (ánh trăng) để vừa bí ẩn vừa mang bản sắc thương hiệu.
+        brand: {
+          DEFAULT: '#EB480D',
+          light: '#F67F54',
+          dark: '#AC3105',
         },
       },
       fontFamily: {
@@ -25,10 +27,10 @@ export default {
       boxShadow: {
         glow: '0 0 25px rgba(246,231,180,0.35)',
         wolf: '0 0 25px rgba(176,32,58,0.45)',
-        neon: '0 0 30px rgba(139,92,246,0.45)',
+        brand: '0 0 30px rgba(235,72,13,0.45)',
       },
       backgroundImage: {
-        'gz-gradient': 'linear-gradient(135deg, #ff5ca8, #8b5cf6 50%, #5eead4)',
+        'brand-gradient': 'linear-gradient(135deg, #EB480D 0%, #b0203a 55%, #f6e7b4 100%)',
       },
       keyframes: {
         float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
@@ -40,8 +42,8 @@ export default {
           '100%': { transform: 'scale(1)' },
         },
         'pulse-glow': {
-          '0%,100%': { boxShadow: '0 0 15px rgba(139,92,246,0.35)' },
-          '50%': { boxShadow: '0 0 30px rgba(139,92,246,0.7)' },
+          '0%,100%': { boxShadow: '0 0 15px rgba(235,72,13,0.35)' },
+          '50%': { boxShadow: '0 0 30px rgba(235,72,13,0.7)' },
         },
         wiggle: {
           '0%,100%': { transform: 'rotate(-3deg)' },

@@ -54,7 +54,7 @@ export default function EffectOverlay({ logs }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-gz-gradient opacity-10"
+            className="absolute inset-0 bg-brand-gradient opacity-10"
           />
           <motion.div
             initial={{ scale: 0.4, y: 20, rotate: -4 }}
@@ -64,7 +64,7 @@ export default function EffectOverlay({ logs }) {
             className="text-center relative"
           >
             <div className="text-7xl mb-2 drop-shadow-lg">{active.emoji}</div>
-            <div className="font-display text-xl text-white/90 bg-black/40 rounded-full px-4 py-1 inline-block shadow-neon">
+            <div className="font-display text-xl text-white/90 bg-black/40 rounded-full px-4 py-1 inline-block shadow-brand">
               {active.text}
             </div>
           </motion.div>

@@ -18,16 +18,16 @@ function PlayerGrid({ players, myPlayerId, revealTeams, hostPlays = true }) {
             transition={{ type: 'spring', stiffness: 300, damping: 22 }}
             className={`relative rounded-xl p-3 text-center border transition-colors ${
               isObserverHost
-                ? 'border-neon-purple/30 bg-neon-purple/10'
+                ? 'border-brand/30 bg-brand/10'
                 : p.is_alive
-                ? 'border-white/10 bg-night-800/60 hover:border-neon-purple/50'
+                ? 'border-white/10 bg-night-800/60 hover:border-brand/50'
                 : 'border-white/5 bg-night-900/40 grayscale opacity-60'
             } ${p.id === myPlayerId ? 'ring-2 ring-moon shadow-glow' : ''}`}
           >
             <div className="text-2xl">{p.avatar}</div>
             <div className="text-xs mt-1 truncate">{p.name}</div>
             {isObserverHost ? (
-              <div className="text-[10px] text-neon-purple mt-0.5">🎙️ Quản trò</div>
+              <div className="text-[10px] text-brand mt-0.5">🎙️ Quản trò</div>
             ) : (
               !p.is_alive && (
                 <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', bounce: 0.6 }} className="absolute -top-2 -right-2 text-lg">

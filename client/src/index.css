@@ -16,7 +16,7 @@ html, body, #root {
 .font-display { font-family: 'Cinzel', serif; }
 
 .gradient-text {
-  background: linear-gradient(135deg, #ff5ca8, #8b5cf6 50%, #5eead4);
+  background: linear-gradient(135deg, #EB480D 0%, #b0203a 55%, #f6e7b4 100%);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -33,11 +33,11 @@ html, body, #root {
 }
 
 .btn-gradient {
-  background: linear-gradient(135deg, #ff5ca8, #8b5cf6 50%, #5eead4);
+  background: linear-gradient(135deg, #EB480D 0%, #b0203a 55%, #f6e7b4 100%);
   background-size: 200% 200%;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-position 0.6s ease;
 }
-.btn-gradient:hover { background-position: 100% 50%; box-shadow: 0 0 25px rgba(139, 92, 246, 0.45); }
+.btn-gradient:hover { background-position: 100% 50%; box-shadow: 0 0 25px rgba(235, 72, 13, 0.45); }
 .btn-gradient:active { transform: scale(0.96); }
 
 .confetti-piece {

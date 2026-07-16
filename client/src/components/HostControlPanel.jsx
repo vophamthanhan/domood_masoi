@@ -41,14 +41,14 @@ function HostControlPanel({ room, allRoles, onAdvance, onForceSkipHunter }) {
 
   return (
     <div className="glass-card border-blood/30 rounded-2xl p-4">
-      <h3 className="font-display mb-2 text-blood">🎙️ Bảng điều tiết (Chủ phòng)</h3>
+      <h3 className="font-display mb-2 text-blood">🎙️ Bảng điều khiển (Chủ phòng)</h3>
       <p className="text-xs text-white/50 mb-3">
         Pha hiện tại: <b>{PHASE_LABEL[room.phase]}</b> {room.phase === 'night' && `- Đêm ${room.night_number}`}
         {room.phase.startsWith('day') && room.phase !== 'ended' && ` - Ngày ${room.day_number}`}
       </p>
 
       {autoMode ? (
-        <div className="bg-neon-purple/10 border border-neon-purple/30 rounded-xl p-3 text-sm text-center animate-pulse-glow">
+        <div className="bg-brand/10 border border-brand/30 rounded-xl p-3 text-sm text-center animate-pulse-glow">
           🤖 Chế độ tự động đang bật — hệ thống tự chuyển pha, bạn không cần bấm gì cả.
         </div>
       ) : (

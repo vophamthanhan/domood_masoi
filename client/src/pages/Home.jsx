@@ -37,8 +37,8 @@ export default function Home({ onJoined }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden">
-      <div className="pointer-events-none absolute -top-24 -left-24 w-72 h-72 bg-neon-purple/20 rounded-full blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 bg-neon-pink/20 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -left-24 w-72 h-72 bg-brand/20 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 bg-brand-light/20 rounded-full blur-3xl" />
 
       <motion.div
         variants={cardIn}
@@ -67,7 +67,7 @@ export default function Home({ onJoined }) {
               maxLength={20}
               autoComplete="name"
               placeholder="Vd: Minh Trần"
-              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-xl px-4 py-2.5 outline-none transition focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30"
+              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-xl px-4 py-2.5 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30"
             />
           </motion.div>
 
@@ -80,7 +80,7 @@ export default function Home({ onJoined }) {
               autoComplete="off"
               autoCapitalize="characters"
               placeholder="Vd: LANG01"
-              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-xl px-4 py-2.5 outline-none transition focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30 tracking-widest font-display"
+              className="mt-1 w-full text-base bg-night-900 border border-white/10 rounded-xl px-4 py-2.5 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 tracking-widest font-display"
             />
             <p className="text-[11px] text-white/30 mt-1">Phòng chưa có? Tự tạo luôn, bạn thành chủ phòng liền 👑</p>
           </motion.div>
@@ -96,7 +96,7 @@ export default function Home({ onJoined }) {
                   whileHover={{ scale: 1.15, rotate: 6 }}
                   whileTap={{ scale: 0.9 }}
                   className={`text-xl w-10 h-10 rounded-full flex items-center justify-center border transition ${
-                    avatar === a ? 'border-neon-purple bg-neon-purple/20 shadow-neon' : 'border-white/10 hover:border-white/30'
+                    avatar === a ? 'border-brand bg-brand/20 shadow-brand' : 'border-white/10 hover:border-white/30'
                   }`}
                 >
                   {a}

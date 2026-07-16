@@ -62,7 +62,7 @@ function ChatBox({ roomCode, chat, viewerAlive = true, isMute = false }) {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={viewerAlive ? 'Nhắn gì đó...' : 'Nhắn với hồn ma khác...'}
-            className="flex-1 text-base bg-night-900 border border-white/10 rounded-full px-4 py-2 text-sm outline-none transition focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30"
+            className="flex-1 text-base bg-night-900 border border-white/10 rounded-full px-4 py-2 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30"
           />
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-gradient rounded-full px-4 text-sm text-white">
             Gửi

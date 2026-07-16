@@ -46,11 +46,11 @@ function VotingPanel({ roomCode, players, votes, myPlayer, runoffCandidates }) {
               whileHover={canVote && !busy ? { scale: 1.015 } : {}}
               whileTap={canVote && !busy ? { scale: 0.98 } : {}}
               className={`w-full text-left relative overflow-hidden rounded-xl border px-4 py-3 transition ${
-                isMine ? 'border-blood shadow-wolf' : 'border-white/10 hover:border-neon-purple/40'
+                isMine ? 'border-blood shadow-wolf' : 'border-white/10 hover:border-brand/40'
               } disabled:cursor-not-allowed`}
             >
               <motion.div
-                className="absolute inset-y-0 left-0 bg-gradient-to-r from-blood/40 to-neon-pink/25"
+                className="absolute inset-y-0 left-0 bg-gradient-to-r from-blood/40 to-brand-light/25"
                 initial={{ width: 0 }}
                 animate={{ width: `${pct}%` }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}

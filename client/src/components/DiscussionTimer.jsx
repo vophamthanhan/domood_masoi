@@ -24,7 +24,7 @@ export default function DiscussionTimer({ endsAt, isHost, onExtend }) {
   return (
     <div className={`relative overflow-hidden rounded-xl border ${timeUp ? 'border-blood bg-blood/10' : 'border-white/10 bg-night-800/70'}`}>
       <motion.div
-        className={`absolute inset-y-0 left-0 ${timeUp ? 'bg-blood/20' : 'bg-gradient-to-r from-neon-purple/30 to-neon-cyan/20'}`}
+        className={`absolute inset-y-0 left-0 ${timeUp ? 'bg-blood/20' : 'bg-gradient-to-r from-brand/30 to-moon/20'}`}
         animate={{ width: `${pct}%` }}
         transition={{ duration: 0.5, ease: 'linear' }}
       />
@@ -44,7 +44,7 @@ export default function DiscussionTimer({ endsAt, isHost, onExtend }) {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             onClick={() => onExtend(30)}
-            className="text-xs border border-white/10 rounded-full px-3 py-1.5 hover:border-neon-purple/50 shrink-0 transition"
+            className="text-xs border border-white/10 rounded-full px-3 py-1.5 hover:border-brand/50 shrink-0 transition"
           >
             +30s
           </motion.button>

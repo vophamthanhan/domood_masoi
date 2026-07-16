@@ -248,7 +248,7 @@ function PlayerPicker({ players, value, onChange, label }) {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.95 }}
             className={`text-sm rounded-xl px-3 py-2 border transition truncate ${
-              value === p.id ? 'bg-neon-purple/20 border-neon-purple text-white shadow-neon' : 'bg-night-900 border-white/10 hover:border-white/30'
+              value === p.id ? 'bg-brand/20 border-brand text-white shadow-brand' : 'bg-night-900 border-white/10 hover:border-white/30'
             }`}
           >
             {p.name}
