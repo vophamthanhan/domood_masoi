@@ -48,7 +48,7 @@ html, body, #root {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-float, .animate-drift, .animate-gradient-x, .animate-pop-in, .animate-pulse-glow, .animate-wiggle, .confetti-piece {
+  .animate-float, .animate-drift, .animate-gradient-x, .animate-pop-in, .animate-pulse-glow, .animate-wiggle, .animate-wander, .confetti-piece {
     animation: none !important;
   }
 }
