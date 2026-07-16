@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { ensureAnonSession, supabase } from './lib/supabaseClient.js';
 import { useRoom } from './hooks/useRoom.js';
 import SplashScreen from './components/SplashScreen.jsx';
+import IntroVideo from './components/IntroVideo.jsx';
 import AmbientCreatures from './components/AmbientCreatures.jsx';
 
 const Home = lazy(() => import('./pages/Home.jsx'));
@@ -9,19 +10,20 @@ const WaitingRoom = lazy(() => import('./pages/WaitingRoom.jsx'));
 const GameRoom = lazy(() => import('./pages/GameRoom.jsx'));
 
 export default function App() {
-  const [ready, setReady] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
   const [userId, setUserId] = useState(null);
   const [roomCode, setRoomCode] = useState(() => localStorage.getItem('ms_room_code') || '');
   const [myPlayerId, setMyPlayerId] = useState(() => localStorage.getItem('ms_player_id') || '');
   const hasLoadedRoomOnce = useRef(false);
+  const ready = authReady && introDone;
 
   useEffect(() => {
-    // Ép tối thiểu 1.5s cho màn splash đầu tiên - dù đăng nhập ẩn danh có nhanh hơn, người chơi
-    // vẫn kịp thấy trọn hiệu ứng logo/mặt trăng/sói thay vì bị chớp nháy qua ngay.
-    const minDelay = new Promise((resolve) => setTimeout(resolve, 1500));
-    Promise.all([ensureAnonSession(), minDelay]).then(([session]) => {
+    // Đăng nhập ẩn danh chạy song song trong lúc video intro phát - video (~10s) luôn dài hơn
+    // thời gian đăng nhập thực tế nên không có độ trễ cộng dồn khi video kết thúc.
+    ensureAnonSession().then((session) => {
       setUserId(session.user.id);
-      setReady(true);
+      setAuthReady(true);
     });
   }, []);
 
@@ -52,7 +54,7 @@ export default function App() {
   }, [room, roomCode]);
 
   if (!ready) {
-    return <SplashScreen label="Đang mở cổng làng..." />;
+    return <IntroVideo onDone={() => setIntroDone(true)} ready={authReady} />;
   }
 
   const showReconnecting = roomCode && room && connectionStatus && connectionStatus !== 'SUBSCRIBED';
