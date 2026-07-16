@@ -24,20 +24,25 @@ export default function IntroVideo({ onDone, ready }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-night-950">
-      <video
-        ref={videoRef}
-        src="/loading.mp4"
-        autoPlay
-        muted
-        playsInline
-        onEnded={() => setVideoEnded(true)}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      {/* Vignette tối 2 bên để video hoà vào nền đêm của trang, không bị cắt cứng */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(5,5,13,0.85)_100%)]" />
+      <div className="stars" />
+      <div className="fog" />
+
+      <div className="relative z-10">
+        {/* Quầng sáng brand phía sau khung video, giữ khung video ~50% màn hình và luôn nằm giữa */}
+        <div className="pointer-events-none absolute inset-0 m-auto w-[65vmin] h-[65vmin] blur-3xl bg-brand/25 rounded-full animate-pulse" />
+        <video
+          ref={videoRef}
+          src="/loading.mp4"
+          autoPlay
+          muted
+          playsInline
+          onEnded={() => setVideoEnded(true)}
+          className="relative w-[50vmin] h-[50vmin] max-w-[520px] max-h-[520px] min-w-[220px] min-h-[220px] object-cover rounded-2xl shadow-brand"
+        />
+      </div>
 
       {videoEnded && !ready && (
-        <div className="absolute inset-0 flex items-center justify-center bg-night-950/90">
+        <div className="absolute inset-0 flex items-center justify-center bg-night-950/90 z-20">
           <p className="font-display text-lg gradient-text animate-gradient-x tracking-wide animate-pulse">
             Đang mở cổng làng...
           </p>
@@ -47,7 +52,7 @@ export default function IntroVideo({ onDone, ready }) {
       {showSkip && !videoEnded && (
         <button
           onClick={skip}
-          className="absolute bottom-5 right-5 text-xs text-white/60 hover:text-white border border-white/20 hover:border-brand/60 rounded-full px-4 py-2 backdrop-blur-sm bg-black/20 transition"
+          className="absolute bottom-5 right-5 z-20 text-xs text-white/60 hover:text-white border border-white/20 hover:border-brand/60 rounded-full px-4 py-2 backdrop-blur-sm bg-black/20 transition"
         >
           Bỏ qua ⏭
         </button>
